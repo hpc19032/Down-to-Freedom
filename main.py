@@ -12,36 +12,40 @@ screen = pygame.display.set_mode([280, 343])
 
 
 #Loading images
-bg_surface = pygame.image.load('Assets/Background .png')
-r_keycard = pygame.image.load('Assets/Red_Keycard.png')
-o_keycard = pygame.image.load('Assets/Orange_Keycard.png')
-crowbar = pygame.image.load('Assets/Crowbar.png')
-note = pygame.image.load('Assets/Note.png')
-m_office_map = pygame.image.load('Assets/Managers office.png')
-closet_map = pygame.image.load('Assets/Janitors closet.png')
-l_meeting_map = pygame.image.load('Assets/Large Meeting Room.png')
-office_map = pygame.image.load('Assets/Office.png')
-reception_map = pygame.image.load('Assets/Reception.png')
-lobby_map = pygame.image.load('Assets/Lobby.png')
-break_map = pygame.image.load('Assets/Break Room.png')
-hallway_map = pygame.image.load('Assets/Hallway.png')
-meeting_map_one = pygame.image.load('Assets/Small Meeting Room One.png')
-meeting_map_two = pygame.image.load('Assets/Small Meeting Room Two.png')
-Main_map = pygame.image.load('Assets/Main Map Circle.png')
+bg_surface = pygame.image.load('Assets/Background .bmp')
+r_keycard = pygame.image.load('Assets/Red Key Card.bmp')
+o_keycard = pygame.image.load('Assets/Orange Keycard.bmp')
+crowbar = pygame.image.load('Assets/CrowBar.bmp')
+note = pygame.image.load('Assets/Note.bmp')
+m_office_map = pygame.image.load('Assets/Managers office map.bmp')
+closet_map = pygame.image.load('Assets/Janitors closet map.bmp')
+l_meeting_map = pygame.image.load('Assets/Large Meeting Room Map.bmp')
+office_map = pygame.image.load('Assets/Office map .bmp')
+reception_map = pygame.image.load('Assets/Reception Map.bmp')
+lobby_map = pygame.image.load('Assets/Lobby Map.bmp')
+break_map = pygame.image.load('Assets/Break Room map.bmp')
+hallway_map = pygame.image.load('Assets/Hallway Map.bmp')
+meeting_map_one = pygame.image.load('Assets/Small Meeting Room One.bmp')
+meeting_map_two = pygame.image.load('Assets/Small Meeting Room Two map.bmp')
+Main_map = pygame.image.load('Assets/Main Map Circle.bmp')
 
 #Setting title
 pygame.display.set_caption("Down to Freedom")
 screen.blit(bg_surface, (0, 0))
 screen.fill((243,255,255))
 
-#settinginput box variables
-font = pygame.font.SysFont("dejavusans", 18)  
+font_name = "dejavusans"  # Font name
+font_size = 18  # Font size
+
+# Create a font object
+font = pygame.font.Font(None, font_size)
 clock = pygame.time.Clock()
 user_text = ''
 active = ''
 input_rect = pygame.Rect(15,288,224,39)
 colour_passive = (170,170,170)
-colour_active = (190,190,190)
+colour_active = (200,200,200)
+colour_incorrect = (255,64,64)
 
 # keeping track of room for game loop
 room = "play_game"
@@ -67,7 +71,11 @@ hallway_time = 0
 #Rendering text
 def write(text):
 	
-	font = pygame.font.SysFont("dejavusans", 9)  
+	font_name = "dejavusans"  # Font name
+	font_size = 9  # Font size
+
+	# Create a font object
+	font = pygame.font.Font(None, font_size)
 
  	#setting position of each line
 	y = 45
@@ -82,7 +90,7 @@ def write(text):
 		screen.blit(story_surface, (x, y))
 		y += 9
 		pygame.display.update()
-
+		#write('\033[1m Your Name \033[0m')
 
 
 while True:
@@ -182,6 +190,12 @@ items will come into play
 automatically; When moving
 in the correct direction.
 
+If you need a refresher of 
+these rules at any point
+simply type 
+
+"Rules".
+
 (Press Space to continue)""")
 
 				# waiting for key press to move on
@@ -251,30 +265,23 @@ card's presence.""")
 			#	Alternative text when entering room for second time
 			else:
 				screen.blit(bg_surface, (0, 0))
-				write("""You have just 
-entered the Meeting 
-Room, Nothing has 
-changed since you 
-were last in here.""")
+				write("""You once more  
+find yourself in a large 
+dimly lit meeting 
+room. The room remains 
+dominated by the 
+large, wooden table a 
+smudge of dust missing
+from the courner where
+the Red Keycard once 
+rested.""")
 				
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_RETURN:
 
 				# attempting to pick up an invalid item
-				if input == "pickup orange keycard" or input == "pickup crowbar" or input == "pickup note":
-					screen.blit(bg_surface, (0, 0))
-					write("""You look around but
-there seems to be no
-such object in this room""")
-				
-				# attempting to move an invalid direction
-				elif input == "move north" or input == "move south" or input == "move west" or input == "move south east" or input == "move south west" or input == "move north east" or input == "move north west":
-
-					screen.blit(bg_surface, (0, 0))
-					write("""As much as you may 
-wish to go in that 
-direction, there is 
-no door there.""")
+				if input in ['move west', 'move south', 'move north', 'pickup crowbar', 'pickup orange keycard', 'move north east', 'move north west', 'move south east', 'move south west', 'pickup note', '']:
+					colour == colour_incorrect
 
 				# attempting to leave without a keycard.
 				elif input == "move east" and "red_keycard" not in inventory:
@@ -288,7 +295,42 @@ the door. Despite your
 best efforts it refuses 
 to budge, giving up, you 
 look around the room 
-for another solution.""")
+for another solution.
+
+(Press space to coninue)""")
+
+					waiting_for_keypress = True
+					while waiting_for_keypress:
+						for event in pygame.event.get():
+							if event.type == pygame.KEYDOWN:
+								if event.key == pygame.K_SPACE:
+									waiting_for_keypress = False
+									screen.blit(bg_surface, (0, 0))
+
+					screen.blit(bg_surface, (0, 0))
+					write("""You remain
+in a dimly 
+lit meeting room. Tall, 
+imposing windows 
+stretch from floor to 
+ceiling along one wall. 
+The room is dominated 
+by a large, dusty 
+wooden meeting table. 
+On the table lies a 
+“red keycard”, 
+its edges catching what 
+little light is available. 
+Across the room to the 
+east a majestic set of 
+double doors are seamlessly 
+embedded in the pale off-white 
+of the surrounding walls. Next 
+to this door, a card reader 
+is affixed to the wall, a 
+pulsating red light upon it, 
+signals the need for a
+card's presence.""")
 
 				# Picking up keycard
 				elif input == "pickup red keycard":
@@ -302,7 +344,42 @@ and into your hand
 disturbing the dust as 
 you pick it up and place 
 it in your pocket for future 
-use.""")
+use.
+
+(Press Space to continue)""")
+
+					waiting_for_keypress = True
+					while waiting_for_keypress:
+						for event in pygame.event.get():
+							if event.type == pygame.KEYDOWN:
+								if event.key == pygame.K_SPACE:
+									waiting_for_keypress = False
+									screen.blit(bg_surface, (0, 0))
+
+					screen.blit(bg_surface, (0, 0))
+					write("""You remain
+in a dimly 
+lit meeting room. Tall, 
+imposing windows 
+stretch from floor to 
+ceiling along one wall. 
+The room is dominated 
+by a large, dusty 
+wooden meeting table. 
+On the table lies a 
+“red keycard”, 
+its edges catching what 
+little light is available. 
+Across the room to the 
+east a majestic set of 
+double doors are seamlessly 
+embedded in the pale off-white 
+of the surrounding walls. Next 
+to this door, a card reader 
+is affixed to the wall, a 
+pulsating red light upon it, 
+signals the need for a
+card's presence.""")
 
 				# moving to reception when requirements met
 				elif input == "move east" and "red_keycard" in inventory:
@@ -354,23 +431,34 @@ off-white of the walls:
 			#Alternative text when entering room for second time
 			else:
 				screen.blit(bg_surface, (0, 0))
-				write("""You have just 
-entered the 
-Reception, Nothing 
-has changed since 
-you were last here.""")
+				write("""You once more find
+yourself in the 
+reception.
+
+Five doors continue
+to lead from the room:
+
+- To the north, a door 
+  is slightly ajar, 
+  giving you a glimps 
+  of the office beyond.
+- To the south, an 
+  extremely worn door sits 
+	in shadows.
+- On the east wall, large glass
+  doors are set into the wall, 
+  showing the lobby beyond.
+- To the west the large wooden 
+  doors remain open.
+- To the south west a door sits 
+  slightly ajar showing a 
+  hallway beyond.""")
 				
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_RETURN:
 
-				# attempting to pickup item not in room
-				if input == "pickup red keycard" or input == "pickup orange keycard" or input == "pickup crowbar":
-
-					screen.blit(bg_surface, (0, 0))
-					write("""You look around
-but there seems to
-be no such item in
-this room.""")
+				if input in ['pickup crowbar', 'pickup orange keycard', 'pickup red keycard', 'move north east', 'move north west', 'move south east', 'pickup note', '']:
+					colour == colour_incorrect
 
 				# Moveing to closet
 				elif input == "move south":
@@ -406,15 +494,6 @@ this room.""")
 					reception_time = 1
 					loop = 1
 					room = "hallway"
-
-				# attempting to move an invalid direction
-				elif input == "move south east" or input == "move north east" or input == "move north west":
-
-					screen.blit(bg_surface, (0, 0))
-					write("""As much as you may 
-wish to go in that 
-direction, there is 
-no door there.""")
 
 
 
@@ -457,30 +536,19 @@ eerie place.""")
 			# Alternative text when entering room for second time.
 			else:
 				screen.blit(bg_surface, (0, 0))
-				write("""You have just 
-entered the Hallway, 
-Nothing has changed 
-since you were last 
-in here.""")
+				write("""You stand once more, 
+in the hallway, 
+To the east and west, 
+there are double doors 
+leading to small 
+meeting rooms.""")
 
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_RETURN:
 
 				# attempting to pickup random item
-				if input == "pickup orange keycard" or input == "pickup red keycard" or input == "pickup note":
-					screen.blit(bg_surface, (0, 0))
-					write("""You look around but
-there seems to be no
-such object in this room""")
-
-				# attempting to move an invalid direction
-				elif input == "move south" or input == "move north east" or input == " move north west" or input == "move south west" or input == "move south west":
-
-					screen.blit(bg_surface, (0, 0))
-					write("""As much as you may 
-wish to go in that 
-direction, there is 
-no door there.""")
+				if input in ['move east', 'move south','pickup crowbar', 'pickup orange keycard', 'pickup red keycard', 'move north east', 'move north west', 'move south east', 'move south west' 'pickup note', '']:
+					colour == colour_incorrect
 
 				# Moving back to reception
 				elif input == "move north":
@@ -535,37 +603,25 @@ view beyond.""")
 			# Alternative text when entering room for second time.
 			else:
 				screen.blit(bg_surface, (0, 0))
-				write("""You have just entered 
-Meeting room one, 
-Nothing has changed 
-since you were last 
-in here.""")
+				write("""You step into 
+a small, meeting 
+room, a once-polished 
+wooden table at the 
+room's center.""")
 
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_RETURN:
 
 				# attempting to pickup random item
-				if input == "pickup orange keycard" or input == "pickup red keycard" or input == "pickup note" or input == "pickup crowbar":
-					screen.blit(bg_surface, (0, 0))
-					write("""You look around but
-there seems to be no
-such object in this room""")
+				if input in ['move west', 'move north' 'move south','pickup crowbar', 'pickup orange keycard', 'pickup red keycard', 'move north east', 'move north west', 'move south east', 'move south west', 'pickup note', '']:
+					colour == colour_incorrect
 
-		# attempting to move an invalid direction
-		elif input == "move north" or input == "move south" or input == "move west" or input == "move north east" or input == " move north west" or input == "move south west" or input == "move south west":
-
-			screen.blit(bg_surface, (0, 0))
-			write("""As much as you may 
-wish to go in that 
-direction, there is 
-no door there.""")
-
-		# Moving back to reception
-		elif input == "move east":
-			input = ""
-			closet_time = 1
-			loop = 1
-			room = "hallway"
+				# Moving back to reception
+				elif input == "move east":
+					input = ""
+					closet_time = 1
+					loop = 1
+					room = "hallway"
 
 
 
@@ -604,33 +660,44 @@ intentlyon this mysterious
 piece of paper, beckoning you 
 to discover its message.""")
 
+			elif "note" in inventory:
+				screen.blit(bg_surface, (0, 0))
+				write("""You once more 
+enter one of the 
+small meeting rooms,
+The air is a little
+less stagnet that it
+was. The table remains
+in the center of the
+room """)
+				
 			# Alternative text when entering room for second time.
 			else:
 				screen.blit(bg_surface, (0, 0))
-				write("""You have just entered 
-Meeting room two, 
-Nothing has changed 
-since you were last 
-in here.""")
+				write("""You once more 
+enter one of the 
+small meeting rooms,
+The air is a little
+less stagnet that it
+was. The table remains
+in the center of the
+room. On the table, a 
+singular item draws your 
+attention — a "note", its crisp 
+edges contrasting with the 
+room's decay. The room, devoid 
+of windows, seems to focus 
+your attention even more 
+intentlyon this mysterious 
+piece of paper, beckoning you 
+to discover its message.""")
 
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_RETURN:
 
 				# attempting to pickup random item
-				if input == "pickup orange keycard" or input == "pickup red keycard" or input == "pickup crowbar":
-					screen.blit(bg_surface, (0, 0))
-					write("""You look around but
-there seems to be no
-such object in this room""")
-
-				# attempting to move an invalid direction
-				elif input == "move north" or input == "move south" or input == "move east" or input == "move north east" or input == " move north west" or input == "move south west" or input == "move south west":
-
-					screen.blit(bg_surface, (0, 0))
-					write("""As much as you may 
-wish to go in that 
-direction, there is 
-no door there.""")
+				if input in ['move east', 'move north' 'move south','pickup crowbar', 'pickup orange keycard', 'pickup red keycard', 'move north east', 'move north west', 'move south east', 'move south west', '']:
+					colour == colour_incorrect
 
 				# Moving back to hallway
 				elif input == "move west":
@@ -758,7 +825,7 @@ adventure. """)
 
 		if loop == 1:
 			loop = 2
-			screen.blit(Break_map, (158,20))
+			screen.blit(break_map, (158,20))
 			screen.blit(bg_surface, (0, 0))
 			if break_time == 0:
 
@@ -971,7 +1038,7 @@ no door there.""")
 				# Moving back to office
 				elif input == "move east":
 					input = ""
-					office_time = 1
+					m_office_time = 1
 					loop = 1
 					room = "office"
 
